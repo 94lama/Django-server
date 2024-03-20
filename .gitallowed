@@ -1,0 +1,4 @@
+# /#\w+?[(pP)(aA)(sS)(sS)(wW)]o?O?r?R?D?d?$/
+
+# allow migrations
+^(()[^:]*/)?migrations/
