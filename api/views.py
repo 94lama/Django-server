@@ -1,12 +1,40 @@
 from django.shortcuts import HttpResponse
+from django.http import HttpRequest
 from jobs.models import Job
 import json
 
+query_list = ['id', 'client', 'title', 'location']
+
 # Create your views here.
-def index(request):
+def index(request: HttpRequest):
+    if request:
+        return HttpResponse(json.dumps(request.COOKIES['csrftoken']))
     jobs = []
     for item in Job.objects.all():
         jobs.append(item.__obj__())
     response = HttpResponse(json.dumps(jobs))
     response.headers['Content-Type'] = 'application/json'
     return response
+
+def job(request: HttpRequest, job_id: int):
+    job = Job.objects.get(id=job_id)
+    response = HttpResponse(json.dumps(job.__obj__()))
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
+def search_job(request: HttpRequest, key: str, value: str):
+    jobs = []
+    if key == 'client':
+        for item in Job.objects.all():
+            if item.client.username == value:
+                jobs.append(item.__obj__())
+        response = HttpResponse(json.dumps(jobs))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    elif key in query_list:
+        for item in Job.objects.filter(**{key: value}):
+            jobs.append(item.__obj__())
+        response = HttpResponse(json.dumps(jobs))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else: return HttpResponse(status=400)
