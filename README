@@ -1,0 +1,12 @@
+# Initialization
+
+## Docker
+If it is the first initialization, build the image, else skip this passage
+```sh
+docker build -t tovarish-server .
+```
+
+Then create the container from the image and run it automatically
+```sh
+docker run --name tovarish-server -it -p 8000:8000 tovarish-server
+```
