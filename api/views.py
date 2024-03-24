@@ -1,14 +1,23 @@
 from django.shortcuts import HttpResponse
 from django.http import HttpRequest
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from jobs.models import Job
 import json
 
 query_list = ['id', 'client', 'title', 'location']
 
+
+# Test environment
+class TestView(APIView):
+    def get(self, request):
+        return Response('Request accepted', status=200)
+
+
 # Create your views here.
-def index(request: HttpRequest):
+def index(request):
     if request:
-        return HttpResponse(json.dumps(request.COOKIES['csrftoken']))
+        return HttpResponse(json.dumps(request.COOKIES['csrftoken']), status=200)
     jobs = []
     for item in Job.objects.all():
         jobs.append(item.__obj__())

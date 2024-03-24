@@ -8,9 +8,10 @@ class Job(models.Model):
     title = models.CharField(max_length=200, default='No title')
     location = models.CharField(max_length=200, null=True)
     description = models.TextField(max_length=1000, null=True)
+    worker = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='worker')
 
     def __str__(self):
         return self.title
     def __obj__(self):
-        return {'client': self.client.username, 'title': self.title, 'location': self.location, 'description': self.description}
+        return {'client': self.client.username, 'title': self.title, 'location': self.location, 'description': self.description, 'worker': self.worker.username if self.worker else None}
         
