@@ -13,5 +13,5 @@ class Job(models.Model):
     def __str__(self):
         return self.title
     def __obj__(self):
-        return {'client': self.client.username, 'title': self.title, 'location': self.location, 'description': self.description, 'worker': self.worker.username if self.worker else None}
+        return {'id': self.id, 'client': self.client.username, 'title': self.title, 'location': self.location, 'description': self.description, 'worker': self.worker.username if self.worker else None}
         
