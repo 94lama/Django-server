@@ -1,7 +1,10 @@
+from django.contrib.auth.models import User
 from django.shortcuts import HttpResponse
 from django.http import HttpRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt import exceptions
+from rest_framework_simplejwt.tokens import RefreshToken
 from jobs.models import Job
 import json
 
@@ -12,7 +15,6 @@ query_list = ['id', 'client', 'title', 'location']
 class TestView(APIView):
     def get(self, request):
         return Response('Request accepted', status=200)
-
 
 # Create your views here.
 def index(request):
@@ -47,3 +49,15 @@ def search_job(request: HttpRequest, key: str, value: str):
         response.headers['Content-Type'] = 'application/json'
         return response
     else: return HttpResponse(status=400)
+
+def logout(request):
+    try:
+        body = json.loads(request.body)
+        refresh_token = body['refresh']
+        refresh_token = RefreshToken(refresh_token)
+        refresh_token.blacklist()
+        response = HttpResponse(status=200, content='Logout success')
+        response.set_cookie('sessionid', '')
+    except exceptions.InvalidToken: response = HttpResponse(status=400, content='Invalid token')
+    return response
+  

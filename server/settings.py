@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'api.apps.ApiConfig',
     'jobs.apps.JobsConfig',
 ]
@@ -76,7 +77,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'server.wsgi.application'
 
 
-# Database
+# ///[Database]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 '''TODO 
 - Change the database to MySQL
@@ -90,7 +91,7 @@ DATABASES = {
 }
 
 
-# Password validation
+# ///[Password validation]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# ///[Internationalization]
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -144,7 +145,7 @@ REST_FRAMEWORK = {
 """         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication', """
 
-# CORS Headers settings
+# ///[CORS Headers settings]
 # https://github.com/adamchainz/django-cors-headers#setup
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
@@ -154,7 +155,7 @@ CORS_ALLOWED_ORIGINS = [
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
@@ -190,3 +191,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+# ///[Email settings]
+""" EMAIL_HOST=''
+EMAIL_HOST_USER=''
+EMAIL_HOST_PASSWORD=''
+EMAIL_PORT='' """

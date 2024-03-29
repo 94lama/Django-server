@@ -8,13 +8,6 @@ from rest_framework.request import Request
 from jobs.models import Job
 import json
 
-def authenticate(token):
-    auth = JWTAuthentication()
-    token = auth.get_validated_token(token)
-    token = auth.get_user(token)
-    user = User.objects.get(username=token)
-    return user
-
 # Create your views here.
 def index(request:Request):
     jobs = []
@@ -27,32 +20,31 @@ def index(request:Request):
 def job_detail(request:Request, id):
     try:
         job = Job.objects.get(id=id).__obj__()
+        print(request.headers)
         if request.headers.get('Authorization'):
             jwt_authentication = JWTAuthentication()
             user = jwt_authentication.authenticate(request)
-            """ print(auth_user[1])
-            user = User.objects.get(id=auth_user.user_id)
-            print(user) """
             job['hasPermission'] = True if user and user[0].is_staff else False
             return HttpResponse(json.dumps(job))
         else: return HttpResponse(json.dumps(job))
     except exceptions.InvalidToken: return HttpResponse(json.dumps(job))
 
-
 #@decorator_from_middleware(CsrfViewMiddleware)
 def my_jobs(request:Request):
-    body = json.loads(request.body)
     try:
-        user = authenticate(body['token'])
+        jwt_authentication = JWTAuthentication()
+        token = jwt_authentication.authenticate(request)
+        if token:
+            user = User.objects.get(id=token[0].id)
+            print('user ', token)
+            jobs = []
+            for item in Job.objects.filter(client=user):
+                jobs.append(item.__obj__())
+            response = HttpResponse(json.dumps(jobs))
+            response.headers['Content-Type'] = 'application/json'
+            return response
+        else : return HttpResponse(status=400)
     except exceptions.InvalidToken: return HttpResponse(status=401)
-    if user:
-        jobs = []
-        for item in Job.objects.filter(client=user):
-            jobs.append(item.__obj__())
-        response = HttpResponse(json.dumps(jobs))
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    else : return HttpResponse(status=400)
 
 def create(request:Request):
     body = json.loads(request.body)
