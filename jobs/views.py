@@ -48,7 +48,8 @@ def my_jobs(request:Request):
 
 def create(request:Request):
     body = json.loads(request.body)
-    user = authenticate(body['token'])
+    jwt_authentication = JWTAuthentication()
+    user = jwt_authentication.authenticate(request)[0]
     if user:
         job = Job()
         job.client = user
@@ -63,7 +64,8 @@ def create(request:Request):
 
 def edit(request:Request):
     body = json.loads(request.body)
-    user = authenticate(body['token'])
+    jwt_authentication = JWTAuthentication()
+    user = jwt_authentication.authenticate(body['token'])[0]
     if user and user.is_staff:
         job = Job.objects.get(id=body['id'])
         job.title = body['title']
