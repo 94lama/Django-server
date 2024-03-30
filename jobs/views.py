@@ -62,16 +62,27 @@ def create(request:Request):
     elif not user.is_auth: return HttpResponse("Unauthorized", status=401)
     else: return HttpResponse("Error", status=400)
 
-def edit(request:Request):
-    body = json.loads(request.body)
+def edit(request:Request, id):
+    announcement = json.loads(request.body)
     jwt_authentication = JWTAuthentication()
-    user = jwt_authentication.authenticate(body['token'])[0]
+    user = jwt_authentication.authenticate(request)[0]
     if user and user.is_staff:
-        job = Job.objects.get(id=body['id'])
-        job.title = body['title']
-        job.location = body['location']
-        job.description = body['description']
+        job = Job.objects.get(id=id)
+        job.title = announcement['title']
+        job.location = announcement['location']
+        job.description = announcement['description']
         job.save()
+        response = HttpResponse('Ok', status=200)
+        return response
+    elif not user.is_staff: return HttpResponse("Unauthorized", status=401)
+    else: return HttpResponse("Error", status=400)
+
+def delete(request:Request, id):
+    jwt_authentication = JWTAuthentication()
+    user = jwt_authentication.authenticate(request)[0]
+    if user and user.is_staff:
+        job = Job.objects.get(id=id)
+        job.delete()
         response = HttpResponse('Ok', status=200)
         return response
     elif not user.is_staff: return HttpResponse("Unauthorized", status=401)
